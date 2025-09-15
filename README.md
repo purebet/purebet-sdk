@@ -169,7 +169,9 @@ Convert UUID string to Uint8Array for bet IDs.
 #### `decodeMkt(mkt: number, home?: string, away?: string)`
 Decode market type from number to human-readable format. Home and away team names can be added for enchanced output.
 
-**Returns:** Object with `name`, `type`, `description`, and optional `value`
+**Returns:** Object with `name`, `type`, `description`, `displayType` and optional `value`
+**displayTypes:** 0 - binary market (e.g. Moneyline), 1 - binary market with array of values (e.g. Over/under 1.5,2.5,3.5), 2 - Back/lay markets which get grouped (e.g. Home/Draw/Away), 3 - One-sided markets which get grouped (e.g. FT-BTTS where only side0 is valid to bet on)
+
 
 #### `decodePeriod(period: number, sport?: number)`
 Decode period from number to readable format. Sport id can be added for enchanced output
@@ -216,6 +218,7 @@ import {
 
 - Email: purebetprotocol@gmail.com
 - Issues: [GitHub Issues](https://github.com/purebet/purebet-sdk/issues)
+- Telegram/Discord: pure_lmao
 
 ## Changelog
 

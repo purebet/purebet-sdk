@@ -1,0 +1,51 @@
+{
+  "name": "@purebet/purebet-sdk",
+  "version": "0.0.1",
+  "description": "Purebet SDK for Solana betting operations",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "constants.js",
+    "constants.d.ts",
+    "codex.js",
+    "codex.d.ts",
+    "instructions/*.js",
+    "instructions/*.d.ts",
+    "utils/*.js",
+    "utils/*.d.ts",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "solana",
+    "betting",
+    "sdk",
+    "blockchain",
+    "defi"
+  ],
+  "author": "Pure <purebetprotocol@gmail.com>",
+  "dependencies": {
+    "@solana/kit": "^2.3.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@types/node": "^22.15.15"
+  },
+  "peerDependencies": {
+    "@solana/kit": "^2.3.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/purebet/purebet-sdk.git",
+    "directory": "sdk"
+  },
+  "bugs": {
+    "url": "https://github.com/purebet/purebet-sdk/issues"
+  },
+  "homepage": "https://github.com/purebet/purebet-sdk#readme"
+}

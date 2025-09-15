@@ -47,5 +47,8 @@
   "bugs": {
     "url": "https://github.com/purebet/purebet-sdk/issues"
   },
-  "homepage": "https://github.com/purebet/purebet-sdk#readme"
+  "homepage": "https://github.com/purebet/purebet-sdk#readme",
+  "publishConfig": {
+    "access": "public"
+  }
 }

@@ -44,6 +44,7 @@ const betData = {
   frontend_id: 1,
   referral: 0,
   keep_open: false,
+  bet_token: 0,
   selections: [{
     sport: 1,
     league: 100,

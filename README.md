@@ -251,3 +251,5 @@ import {
 - Complete TypeScript definitions
 ### v0.0.3
 - add option to serialise the instructions
+### v0.04
+- add bet_token to codex

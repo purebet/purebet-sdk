@@ -32,8 +32,12 @@ import {
    transformDecoder,
    getArrayEncoder,
    getArrayDecoder,
+   getStructCodec,
+   getBase58Codec,
+   getArrayCodec,
+   getU8Codec,
 } from "@solana/codecs";
-import { getAddressEncoder, getAddressDecoder, Address } from "@solana/kit";
+import { getAddressEncoder, getAddressDecoder, Address, Instruction, AccountRole } from "@solana/kit";
 
 // --- TypeScript type definitions mirroring Rust, using Address and Uint8Array for codec compatibility ---
 
@@ -95,6 +99,49 @@ export type Offer = {
 export type MMOfferAccount = {
    existing_offers: Map<bigint, bigint>;
 };
+
+export const getInstructionCodec = (): Codec<Instruction> =>
+   combineCodec(getInstructionEncoder(), getInstructionDecoder());
+
+export const getInstructionEncoder = (): Encoder<Instruction> =>
+   transformEncoder(
+      getStructEncoder([
+         ['programAddress', getBase58Codec()],
+         ['accounts', getArrayEncoder(getStructEncoder([
+            ['address', getBase58Codec()],
+            ['role', getU8Encoder()],
+         ]))],
+         ['data', getArrayEncoder(getU8Encoder())],
+      ]),
+      (instruction: Instruction) => ({
+         programAddress: instruction.programAddress,
+         accounts: (instruction.accounts || []).map(account => ({
+            address: account.address,
+            role: account.role,
+         })),
+         data: Array.from(instruction.data || new Uint8Array()),
+      })
+   );
+
+export const getInstructionDecoder = (): Decoder<Instruction> =>
+   transformDecoder(
+      getStructDecoder([
+         ['programAddress', getBase58Codec()],
+         ['accounts', getArrayDecoder(getStructDecoder([
+            ['address', getBase58Codec()],
+            ['role', getU8Decoder()],
+         ]))],
+         ['data', getArrayDecoder(getU8Decoder())],
+      ]),
+      (decoded) => ({
+         programAddress: decoded.programAddress as Address,
+         accounts: decoded.accounts.map(account => ({
+            address: account.address as Address,
+            role: account.role as AccountRole,
+         })),
+         data: new Uint8Array(decoded.data),
+      })
+   );
 
 // --- Codec definitions ---
 

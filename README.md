@@ -112,17 +112,18 @@ const devnetToken = TOKEN_MINT_ADDR.solana_devnet;
 
 ### Core Functions
 
-#### `buildPlaceBetInstruction(bettor, betData, network?)`
+#### `buildPlaceBetInstruction(bettor, betData, network?, serialise?)`
 Build an instruction to place a bet.
 
 **Parameters:**
 - `bettor` - The bettor's address
 - `betData` - BetData object containing bet details
 - `network` - Target network (`'solana_mainnet'` or `'solana_devnet'`, defaults to mainnet)
+- `serialise` - Whether to return serialized bytes (Uint8Array) or Instruction object (defaults to false)
 
-**Returns:** Promise resolving to Instruction object
+**Returns:** Promise resolving to Instruction object or Uint8Array (when serialise is true)
 
-#### `buildCancelBetInstruction(isAdmin, bet, bettor, network?, isFreebet?, frontend?)`
+#### `buildCancelBetInstruction(isAdmin, bet, bettor, network?, serialise?, isFreebet?, frontend?)`
 Build an instruction to cancel a bet.
 
 **Parameters:**
@@ -130,23 +131,43 @@ Build an instruction to cancel a bet.
 - `bet` - The bet account address to cancel
 - `bettor` - The bettor's address
 - `network` - Target network (defaults to mainnet)
+- `serialise` - Whether to return serialized bytes (Uint8Array) or Instruction object (defaults to false)
 - `isFreebet` - Whether this is a freebet cancellation (defaults to false)
 - `frontend` - Frontend configuration (required when isFreebet is true, optional otherwise)
 
-**Returns:** Promise resolving to Instruction object
+**Returns:** Promise resolving to Instruction object or Uint8Array (when serialise is true)
 
 **Note:** When `isFreebet` is `true`, the `frontend` parameter becomes mandatory.
 
-#### `buildPlaceFreebetInstruction(bettor, betData, network?, frontend?)`
+#### `buildPlaceFreebetInstruction(bettor, betData, network?, serialise?, frontend?)`
 Build an instruction to place a freebet.
 
 **Parameters:**
 - `bettor` - The bettor's address
 - `betData` - BetData object containing bet details (must have freebet_id > 0)
 - `network` - Target network (defaults to mainnet)
+- `serialise` - Whether to return serialized bytes (Uint8Array) or Instruction object (defaults to false)
 - `frontend` - Frontend configuration (optional, defaults to standard frontend)
 
-**Returns:** Promise resolving to Instruction object
+**Returns:** Promise resolving to Instruction object or Uint8Array (when serialise is true)
+
+### Instruction Serialization
+
+All instruction building functions support a `serialise` parameter that allows you to get the instruction as serialized bytes instead of an Instruction object. This is useful for:
+
+- **API Transmission**: Send instructions over HTTP APIs as binary data
+- **Cross-Platform Integration**: Share instructions between different systems (use in old @solana/web3.js systems)
+
+**Example:**
+```typescript
+// Get instruction as serialized bytes
+const serializedInstruction = await buildPlaceBetInstruction(
+  bettor,
+  betData,
+  'solana_devnet',
+  true // serialise = true
+);
+```
 
 ### Utility Functions
 
@@ -228,3 +249,5 @@ import {
 - Multi-network support (mainnet/devnet)
 - Market and period decoding utilities
 - Complete TypeScript definitions
+### v0.0.3
+- add option to serialise the instructions

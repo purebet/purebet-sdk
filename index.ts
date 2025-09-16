@@ -28,5 +28,5 @@ export {
    // transformBetData,
 } from "./utils/transforms";
 
-// Re-export types from codex
-export type { BetData, Selection, Bet, Offer, Matcher } from "./codex";
+// Re-export types and codecsfrom codex
+export * from "./codex";

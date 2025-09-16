@@ -5,7 +5,7 @@ import {
    getProgramDerivedAddress,
    getAddressEncoder,
 } from "@solana/kit";
-import { getActionsCodec, type BetData } from "../codex";
+import { getActionsCodec, getInstructionCodec, type BetData } from "../codex";
 import { getATA } from "../utils/accounts";
 import {
    PROGRAM_ADDR,
@@ -23,19 +23,38 @@ import {
 
 const actionsCodec = getActionsCodec();
 const addressEncoder = getAddressEncoder();
+const instructionCodec = getInstructionCodec();
 
 /**
  * Builds a PlaceFreeBet instruction
  * @param bettor - The bettor's address
  * @param betData - The bet data (should already have bet_id as Uint8Array)
- * @returns The instruction to place a free bet
+ * @param network - The Solana network to use (mainnet or devnet) - defaults to mainnet
+ * @param serialise - Whether to return the instruction as serialized bytes (Uint8Array) or as an Instruction object - defaults to Instruction
+ * @param frontend - Frontend configuration with ID and address - defaults to Purebet frontend
+ * @returns The instruction to place a free bet, either as an Instruction object or serialized Uint8Array
  */
 export async function buildPlaceFreebetInstruction(
    bettor: Address,
    betData: BetData,
+   network: "solana_mainnet" | "solana_devnet",
+   serialise: false,
+   frontend: {id: number, address: Address},
+): Promise<Instruction>;
+export async function buildPlaceFreebetInstruction(
+   bettor: Address,
+   betData: BetData,
+   network: "solana_mainnet" | "solana_devnet",
+   serialise: true,
+   frontend: {id: number, address: Address},
+): Promise<Uint8Array>;
+export async function buildPlaceFreebetInstruction(
+   bettor: Address,
+   betData: BetData,
    network: "solana_mainnet" | "solana_devnet" = "solana_mainnet",
+   serialise: boolean = false,
    frontend: {id: number, address: Address} = {id: 1, address: FRONTEND_ADDR[network]},
-): Promise<Instruction> {
+): Promise<Instruction|Uint8Array> {
    if(betData.freebet_id == 0){
       throw new Error("Freebet ID is required");
    }
@@ -77,7 +96,7 @@ export async function buildPlaceFreebetInstruction(
    );
 
    // Build and return the instruction
-   return {
+   const instruction: Instruction = {
       programAddress: PROGRAM_ADDR[network],
       accounts: [
          { address: bettor, role: AccountRole.WRITABLE_SIGNER },
@@ -96,4 +115,5 @@ export async function buildPlaceFreebetInstruction(
       ],
       data,
    };
+   return serialise ? instructionCodec.encode(instruction) as Uint8Array : instruction;
 }

@@ -4,7 +4,7 @@ import {
    AccountRole,
    getProgramDerivedAddress,
 } from "@solana/kit";
-import { getActionsCodec, type BetData } from "../codex";
+import { getActionsCodec, getInstructionCodec, type BetData } from "../codex";
 import { getATA } from "../utils/accounts";
 import {
    PROGRAM_ADDR,
@@ -18,18 +18,35 @@ import {
 } from "../constants";
 
 const actionsCodec = getActionsCodec();
+const instructionCodec = getInstructionCodec();
+
 
 /**
  * Builds a PlaceBet instruction
  * @param bettor - The bettor's address
  * @param betData - The bet data (should already have bet_id as Uint8Array)
- * @returns The instruction to place a bet
+ * @param network - The Solana network to use (mainnet or devnet) - defaults to mainnet
+ * @param serialise - Whether to return the instruction as serialized bytes (Uint8Array) or as an Instruction object - defaults to Instruction
+ * @returns The instruction to place a bet, either as an Instruction object or serialized Uint8Array
  */
 export async function buildPlaceBetInstruction(
    bettor: Address,
    betData: BetData,
+   network: "solana_mainnet" | "solana_devnet",
+   serialise: false,
+): Promise<Instruction>
+export async function buildPlaceBetInstruction(
+   bettor: Address,
+   betData: BetData,
+   network: "solana_mainnet" | "solana_devnet",
+   serialise: true,
+): Promise<Uint8Array>
+export async function buildPlaceBetInstruction(
+   bettor: Address,
+   betData: BetData,
    network: "solana_mainnet" | "solana_devnet" = "solana_mainnet",
-): Promise<Instruction> {
+   serialise: boolean = false,
+): Promise<Instruction | Uint8Array> {
    // Derive the bet PDA
    const [betPda] = await getProgramDerivedAddress({
       programAddress: PROGRAM_ADDR[network],
@@ -48,8 +65,7 @@ export async function buildPlaceBetInstruction(
       }),
    );
 
-   // Build and return the instruction
-   return {
+   const instruction: Instruction = {
       programAddress: PROGRAM_ADDR[network],
       accounts: [
          { address: bettor, role: AccountRole.WRITABLE_SIGNER },
@@ -65,4 +81,6 @@ export async function buildPlaceBetInstruction(
       ],
       data,
    };
+
+   return serialise ? instructionCodec.encode(instruction) as Uint8Array : instruction;
 }

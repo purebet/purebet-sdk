@@ -69,6 +69,7 @@ export type Bet = {
    freebet_id: number; // u32
    is_sol_free: boolean;
    keep_open: boolean;
+   bet_token: number; // u8
    placed_at: bigint; // i64
    frontend_id: number; // u8
    referral: number; // u32
@@ -85,6 +86,7 @@ export type BetData = {
    frontend_id: number; // u8
    referral: number; // u32
    keep_open: boolean;
+   bet_token: number; // u8
    selections: Selection[];
 };
 
@@ -208,6 +210,7 @@ const getBetEncoder = (): Encoder<Bet> =>
       ["freebet_id", getU32Encoder()],
       ["is_sol_free", getBooleanEncoder()],
       ["keep_open", getBooleanEncoder()],
+      ["bet_token", getU8Encoder()],
       ["placed_at", getI64Encoder()],
       ["frontend_id", getU8Encoder()],
       ["referral", getU32Encoder()],
@@ -225,6 +228,7 @@ const getBetDecoder = (): Decoder<Bet> =>
       ["freebet_id", getU32Decoder()],
       ["is_sol_free", getBooleanDecoder()],
       ["keep_open", getBooleanDecoder()],
+      ["bet_token", getU8Decoder()],
       ["placed_at", getI64Decoder()],
       ["frontend_id", getU8Decoder()],
       ["referral", getU32Decoder()],
@@ -245,6 +249,7 @@ const getBetDataEncoder = (): Encoder<BetData> =>
       ["frontend_id", getU8Encoder()],
       ["referral", getU32Encoder()],
       ["keep_open", getBooleanEncoder()],
+      ["bet_token", getU8Encoder()],
       ["selections", getArrayEncoder(getSelectionEncoder())],
    ]);
 const getBetDataDecoder = (): Decoder<BetData> =>
@@ -257,6 +262,7 @@ const getBetDataDecoder = (): Decoder<BetData> =>
       ["frontend_id", getU8Decoder()],
       ["referral", getU32Decoder()],
       ["keep_open", getBooleanDecoder()],
+      ["bet_token", getU8Decoder()],
       ["selections", getArrayDecoder(getSelectionDecoder())],
    ]);
 export const getBetDataCodec = (): Codec<BetData> =>

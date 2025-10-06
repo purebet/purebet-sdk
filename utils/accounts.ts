@@ -9,6 +9,9 @@ import {
    SolanaRpcApi,
    GetProgramAccountsDatasizeFilter,
    GetProgramAccountsMemcmpFilter,
+   Base64EncodedBytes,
+   createRpc,
+   createSolanaRpc,
 } from "@solana/kit";
 import { getBetCodec, type Bet } from "../codex";
 import {
@@ -17,6 +20,7 @@ import {
    PROGRAM_ADDR,
    ASSOCIATED_TOKEN_PROGRAM_ID,
 } from "../constants";
+import { uuidToU8Array } from "./transforms";
 
 const addressEncoder = getAddressEncoder();
 const betCodec = getBetCodec();
@@ -46,16 +50,13 @@ export function decodeBetAccount(
       const [decodedData] = data;
       const buffer = Buffer.from(decodedData, "base64");
 
-      // Verify minimum size (8 bytes discriminator + minimum bet data)
       if (buffer.length < 120) {
          throw new BetDecodeError(
             `Invalid bet account size: ${buffer.length} bytes, expected at least 120`,
          );
       }
 
-      // Skip discriminator (8 bytes)
-      const betData = buffer.subarray(8);
-      const decodedBet = betCodec.decode(new Uint8Array(betData));
+      const decodedBet = betCodec.decode(new Uint8Array(buffer));
 
       return {
          ...decodedBet,
@@ -76,6 +77,7 @@ export async function getUserBetsOnchain(
    userAddr: Address,
    rpc: Rpc<SolanaRpcApi>,
    onlyUnmatched: boolean = false,
+   betId?: string | false,
    network: "solana_mainnet" | "solana_devnet" = "solana_mainnet"
 ): Promise<DecodedBetAccount[]> {
    try {
@@ -92,6 +94,15 @@ export async function getUserBetsOnchain(
       if(onlyUnmatched){
          filters.push({
             dataSize: 120n,
+         });
+      }
+      if(betId){
+         filters.push({
+            memcmp: {
+               offset: 0n,
+               bytes: Buffer.from(uuidToU8Array(betId)).toString("base64") as Base64EncodedBytes,
+               encoding: "base64",
+            },
          });
       }
       const response = await rpc

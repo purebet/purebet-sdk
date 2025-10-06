@@ -1,6 +1,6 @@
 {
   "name": "@purebet/purebet-sdk",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Purebet SDK for Solana betting operations",
   "main": "index.js",
   "types": "index.d.ts",

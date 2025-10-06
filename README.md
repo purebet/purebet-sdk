@@ -256,3 +256,6 @@ import {
 - add bet_token to codex
 ### v0.05
 - fix user bet account filters to add unmatchedOnly param
+#v0.06
+- fix bet decoding
+- add finding bet by betId

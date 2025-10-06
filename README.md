@@ -254,3 +254,5 @@ import {
 - add option to serialise the instructions
 ### v0.04
 - add bet_token to codex
+### v0.05
+- fix user bet account filters to add unmatchedOnly param

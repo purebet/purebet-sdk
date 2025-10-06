@@ -7,6 +7,8 @@ import {
    getProgramDerivedAddress,
    Rpc,
    SolanaRpcApi,
+   GetProgramAccountsDatasizeFilter,
+   GetProgramAccountsMemcmpFilter,
 } from "@solana/kit";
 import { getBetCodec, type Bet } from "../codex";
 import {
@@ -45,14 +47,14 @@ export function decodeBetAccount(
       const buffer = Buffer.from(decodedData, "base64");
 
       // Verify minimum size (8 bytes discriminator + minimum bet data)
-      if (buffer.length < 118) {
+      if (buffer.length < 120) {
          throw new BetDecodeError(
-            `Invalid bet account size: ${buffer.length} bytes, expected at least 118`,
+            `Invalid bet account size: ${buffer.length} bytes, expected at least 120`,
          );
       }
 
       // Skip discriminator (8 bytes)
-      const betData = buffer.slice(8);
+      const betData = buffer.subarray(8);
       const decodedBet = betCodec.decode(new Uint8Array(betData));
 
       return {
@@ -73,25 +75,29 @@ export function decodeBetAccount(
 export async function getUserBetsOnchain(
    userAddr: Address,
    rpc: Rpc<SolanaRpcApi>,
+   onlyUnmatched: boolean = false,
    network: "solana_mainnet" | "solana_devnet" = "solana_mainnet"
 ): Promise<DecodedBetAccount[]> {
    try {
 
+      const filters: (GetProgramAccountsDatasizeFilter | GetProgramAccountsMemcmpFilter)[] = [
+         {
+            memcmp: {
+               offset: 16n,
+               bytes: userAddr.toString() as Base58EncodedBytes,
+               encoding: "base58",
+            },
+         }
+      ];
+      if(onlyUnmatched){
+         filters.push({
+            dataSize: 120n,
+         });
+      }
       const response = await rpc
          .getProgramAccounts(PROGRAM_ADDR[network], {
             encoding: "base64",
-            filters: [
-               {
-                  memcmp: {
-                     offset: 16n,
-                     bytes: userAddr.toString() as Base58EncodedBytes,
-                     encoding: "base58",
-                  },
-               },
-               {
-                  dataSize: 118n,
-               },
-            ],
+            filters,
          })
          .send();
 
@@ -154,7 +160,7 @@ export async function getAllBetAccounts(
             const buffer = Buffer.from(data, "base64");
 
             // Only process accounts that could be bet accounts
-            if (buffer.length >= 118) {
+            if (buffer.length >= 120) {
                const decoded = decodeBetAccount(
                   account.account.data,
                   account.pubkey,

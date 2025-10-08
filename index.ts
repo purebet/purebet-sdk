@@ -13,7 +13,7 @@ export {
 } from "./utils/accounts";
 
 // Decode utilities
-export { decodeMkt, decodePeriod, formatSelection } from "./utils/decode";
+export { decodeMkt, decodePeriod, formatSelection, getProgramOperationalStatus } from "./utils/decode";
 
 // Indexer utilities
 export {

@@ -1,4 +1,7 @@
+import { Rpc, SolanaRpcApi } from "@solana/kit";
 import { bytesToPlayer } from "./transforms";
+import { getOperationalStatusCodec, OperationalStatus } from "../codex";
+import { PROGRAM_AUTH_PDA_ADDR } from "../constants";
 
 function numberToSide(number: number, home: string = "Home", away: string = "Away"): string {
    if(number === 1){
@@ -203,4 +206,24 @@ export function formatSelection(selection: {
    const player = bytesToPlayer(selection.player);
    const side = selection.side ? market?.sides[0] : market?.sides[1];
    return `${player === "" ? player + " - " : ""}${market?.name} - ${period?.Longname} - ${side} ${selection.is_live ? " (LIVE)" : ""}`;
+}
+
+/**
+ * Get the current program opperational status
+ */
+const operationalStatusDecoder = getOperationalStatusCodec();
+export async function getProgramOperationalStatus(rpc: Rpc<SolanaRpcApi>, network: "solana_mainnet" | "solana_devnet" = "solana_mainnet"): Promise<OperationalStatus["__kind"]> {
+   try{
+      const response = await rpc
+         .getProgramAccounts(PROGRAM_AUTH_PDA_ADDR[network], {
+            encoding: "base64",
+         })
+         .send();
+      const operationalStatus = operationalStatusDecoder.decode(Buffer.from(...response[0].account.data));
+      return operationalStatus.__kind
+   } catch (error) {
+      throw new Error(
+         `Failed to get program operational status: ${error instanceof Error ? error.message : String(error)}`,
+      );
+   }
 }

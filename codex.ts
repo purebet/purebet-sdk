@@ -32,12 +32,9 @@ import {
    transformDecoder,
    getArrayEncoder,
    getArrayDecoder,
-   getStructCodec,
    getBase58Codec,
-   getArrayCodec,
-   getU8Codec,
-} from "@solana/codecs";
-import { getAddressEncoder, getAddressDecoder, Address, Instruction, AccountRole } from "@solana/kit";
+} from '@solana/codecs';
+import { getAddressEncoder, getAddressDecoder, Address, Instruction, AccountRole } from '@solana/kit';
 
 // --- TypeScript type definitions mirroring Rust, using Address and Uint8Array for codec compatibility ---
 
@@ -69,7 +66,7 @@ export type Bet = {
    freebet_id: number; // u32
    is_sol_free: boolean;
    keep_open: boolean;
-   bet_token: number; // u8
+   bet_token: number; //u8
    placed_at: bigint; // i64
    frontend_id: number; // u8
    referral: number; // u32
@@ -86,7 +83,7 @@ export type BetData = {
    frontend_id: number; // u8
    referral: number; // u32
    keep_open: boolean;
-   bet_token: number; // u8
+   bet_token: number; //u8
    selections: Selection[];
 };
 
@@ -101,6 +98,24 @@ export type Offer = {
 export type MMOfferAccount = {
    existing_offers: Map<bigint, bigint>;
 };
+
+// --- Additional type definitions for all actions ---
+
+export type OperationalStatus = 
+   | { __kind: 'Unknown' }
+   | { __kind: 'Active' }
+   | { __kind: 'MMingPaused' }
+   | { __kind: 'PreBettingPaused' }
+   | { __kind: 'LiveBettingPaused' }
+   | { __kind: 'BettingPaused' }
+   | { __kind: 'Paused' };
+
+
+// --- Codec definitions ---
+
+function fixedBytesDecoder(size: number): Decoder<Uint8Array> {
+   return transformDecoder(fixDecoderSize(getBytesDecoder(), size), (v) => new Uint8Array(v as ArrayLike<number>));
+}
 
 export const getInstructionCodec = (): Codec<Instruction> =>
    combineCodec(getInstructionEncoder(), getInstructionDecoder());
@@ -145,37 +160,28 @@ export const getInstructionDecoder = (): Decoder<Instruction> =>
       })
    );
 
-// --- Codec definitions ---
-
-function fixedBytesDecoder(size: number): Decoder<Uint8Array> {
-   return transformDecoder(
-      fixDecoderSize(getBytesDecoder(), size),
-      (v) => new Uint8Array(v as ArrayLike<number>),
-   );
-}
-
 // Selection codec
 const getSelectionEncoder = (): Encoder<Selection> =>
    getStructEncoder([
-      ["sport", getU8Encoder()],
-      ["league", getU16Encoder()],
-      ["event", getU64Encoder()],
-      ["period", getU8Encoder()],
-      ["mkt", getU16Encoder()],
-      ["player", fixEncoderSize(getBytesEncoder(), 4)],
-      ["side", getBooleanEncoder()],
-      ["is_live", getBooleanEncoder()],
+      ['sport', getU8Encoder()],
+      ['league', getU16Encoder()],
+      ['event', getU64Encoder()],
+      ['period', getU8Encoder()],
+      ['mkt', getU16Encoder()],
+      ['player', fixEncoderSize(getBytesEncoder(), 4)],
+      ['side', getBooleanEncoder()],
+      ['is_live', getBooleanEncoder()],
    ]);
 const getSelectionDecoder = (): Decoder<Selection> =>
    getStructDecoder([
-      ["sport", getU8Decoder()],
-      ["league", getU16Decoder()],
-      ["event", getU64Decoder()],
-      ["period", getU8Decoder()],
-      ["mkt", getU16Decoder()],
-      ["player", fixedBytesDecoder(4)],
-      ["side", getBooleanDecoder()],
-      ["is_live", getBooleanDecoder()],
+      ['sport', getU8Decoder()],
+      ['league', getU16Decoder()],
+      ['event', getU64Decoder()],
+      ['period', getU8Decoder()],
+      ['mkt', getU16Decoder()],
+      ['player', fixedBytesDecoder(4)],
+      ['side', getBooleanDecoder()],
+      ['is_live', getBooleanDecoder()],
    ]);
 export const getSelectionCodec = (): Codec<Selection> =>
    combineCodec(getSelectionEncoder(), getSelectionDecoder());
@@ -183,17 +189,17 @@ export const getSelectionCodec = (): Codec<Selection> =>
 // Matcher codec
 const getMatcherEncoder = (): Encoder<Matcher> =>
    getStructEncoder([
-      ["offer_id", getU64Encoder()],
-      ["addr", getAddressEncoder()],
-      ["amount", getU64Encoder()],
-      ["odds", getU32Encoder()],
+      ['offer_id', getU64Encoder()],
+      ['addr', getAddressEncoder()],
+      ['amount', getU64Encoder()],
+      ['odds', getU32Encoder()],
    ]);
 const getMatcherDecoder = (): Decoder<Matcher> =>
    getStructDecoder([
-      ["offer_id", getU64Decoder()],
-      ["addr", getAddressDecoder()],
-      ["amount", getU64Decoder()],
-      ["odds", getU32Decoder()],
+      ['offer_id', getU64Decoder()],
+      ['addr', getAddressDecoder()],
+      ['amount', getU64Decoder()],
+      ['odds', getU32Decoder()],
    ]);
 export const getMatcherCodec = (): Codec<Matcher> =>
    combineCodec(getMatcherEncoder(), getMatcherDecoder());
@@ -201,39 +207,39 @@ export const getMatcherCodec = (): Codec<Matcher> =>
 // Bet codec
 const getBetEncoder = (): Encoder<Bet> =>
    getStructEncoder([
-      ["bet_id", fixEncoderSize(getBytesEncoder(), 16)],
-      ["requester", getAddressEncoder()],
-      ["requested_stake", getU64Encoder()],
-      ["requested_odds", getU32Encoder()],
-      ["matched_stake", getU64Encoder()],
-      ["matched_odds", getU32Encoder()],
-      ["freebet_id", getU32Encoder()],
-      ["is_sol_free", getBooleanEncoder()],
-      ["keep_open", getBooleanEncoder()],
-      ["bet_token", getU8Encoder()],
-      ["placed_at", getI64Encoder()],
-      ["frontend_id", getU8Encoder()],
-      ["referral", getU32Encoder()],
-      ["selections", getArrayEncoder(getSelectionEncoder())],
-      ["matchers", getArrayEncoder(getMatcherEncoder())],
+      ['bet_id', fixEncoderSize(getBytesEncoder(), 16)],
+      ['requester', getAddressEncoder()],
+      ['requested_stake', getU64Encoder()],
+      ['requested_odds', getU32Encoder()],
+      ['matched_stake', getU64Encoder()],
+      ['matched_odds', getU32Encoder()],
+      ['freebet_id', getU32Encoder()],
+      ['is_sol_free', getBooleanEncoder()],
+      ['keep_open', getBooleanEncoder()],
+      ['bet_token', getU8Encoder()],
+      ['placed_at', getI64Encoder()],
+      ['frontend_id', getU8Encoder()],
+      ['referral', getU32Encoder()],
+      ['selections', getArrayEncoder(getSelectionEncoder())],
+      ['matchers', getArrayEncoder(getMatcherEncoder())],
    ]);
 const getBetDecoder = (): Decoder<Bet> =>
    getStructDecoder([
-      ["bet_id", fixedBytesDecoder(16)],
-      ["requester", getAddressDecoder()],
-      ["requested_stake", getU64Decoder()],
-      ["requested_odds", getU32Decoder()],
-      ["matched_stake", getU64Decoder()],
-      ["matched_odds", getU32Decoder()],
-      ["freebet_id", getU32Decoder()],
-      ["is_sol_free", getBooleanDecoder()],
-      ["keep_open", getBooleanDecoder()],
-      ["bet_token", getU8Decoder()],
-      ["placed_at", getI64Decoder()],
-      ["frontend_id", getU8Decoder()],
-      ["referral", getU32Decoder()],
-      ["selections", getArrayDecoder(getSelectionDecoder())],
-      ["matchers", getArrayDecoder(getMatcherDecoder())],
+      ['bet_id', fixedBytesDecoder(16)],
+      ['requester', getAddressDecoder()],
+      ['requested_stake', getU64Decoder()],
+      ['requested_odds', getU32Decoder()],
+      ['matched_stake', getU64Decoder()],
+      ['matched_odds', getU32Decoder()],
+      ['freebet_id', getU32Decoder()],
+      ['is_sol_free', getBooleanDecoder()],
+      ['keep_open', getBooleanDecoder()],
+      ['bet_token', getU8Decoder()],
+      ['placed_at', getI64Decoder()],
+      ['frontend_id', getU8Decoder()],
+      ['referral', getU32Decoder()],
+      ['selections', getArrayDecoder(getSelectionDecoder())],
+      ['matchers', getArrayDecoder(getMatcherDecoder())],
    ]);
 export const getBetCodec = (): Codec<Bet> =>
    combineCodec(getBetEncoder(), getBetDecoder());
@@ -241,29 +247,29 @@ export const getBetCodec = (): Codec<Bet> =>
 // BetData codec
 const getBetDataEncoder = (): Encoder<BetData> =>
    getStructEncoder([
-      ["bet_id", fixEncoderSize(getBytesEncoder(), 16)],
-      ["amount", getU64Encoder()],
-      ["min_odds", getU32Encoder()],
-      ["freebet_id", getU32Encoder()],
-      ["is_sol_free", getBooleanEncoder()],
-      ["frontend_id", getU8Encoder()],
-      ["referral", getU32Encoder()],
-      ["keep_open", getBooleanEncoder()],
-      ["bet_token", getU8Encoder()],
-      ["selections", getArrayEncoder(getSelectionEncoder())],
+      ['bet_id', fixEncoderSize(getBytesEncoder(), 16)],
+      ['amount', getU64Encoder()],
+      ['min_odds', getU32Encoder()],
+      ['freebet_id', getU32Encoder()],
+      ['is_sol_free', getBooleanEncoder()],
+      ['frontend_id', getU8Encoder()],
+      ['referral', getU32Encoder()],
+      ['keep_open', getBooleanEncoder()],
+      ['bet_token', getU8Encoder()],
+      ['selections', getArrayEncoder(getSelectionEncoder())],
    ]);
 const getBetDataDecoder = (): Decoder<BetData> =>
    getStructDecoder([
-      ["bet_id", fixedBytesDecoder(16)],
-      ["amount", getU64Decoder()],
-      ["min_odds", getU32Decoder()],
-      ["freebet_id", getU32Decoder()],
-      ["is_sol_free", getBooleanDecoder()],
-      ["frontend_id", getU8Decoder()],
-      ["referral", getU32Decoder()],
-      ["keep_open", getBooleanDecoder()],
-      ["bet_token", getU8Decoder()],
-      ["selections", getArrayDecoder(getSelectionDecoder())],
+      ['bet_id', fixedBytesDecoder(16)],
+      ['amount', getU64Decoder()],
+      ['min_odds', getU32Decoder()],
+      ['freebet_id', getU32Decoder()],
+      ['is_sol_free', getBooleanDecoder()],
+      ['frontend_id', getU8Decoder()],
+      ['referral', getU32Decoder()],
+      ['keep_open', getBooleanDecoder()],
+      ['bet_token', getU8Decoder()],
+      ['selections', getArrayDecoder(getSelectionDecoder())],
    ]);
 export const getBetDataCodec = (): Codec<BetData> =>
    combineCodec(getBetDataEncoder(), getBetDataDecoder());
@@ -271,19 +277,19 @@ export const getBetDataCodec = (): Codec<BetData> =>
 // Offer codec
 const getOfferEncoder = (): Encoder<Offer> =>
    getStructEncoder([
-      ["offer_id", getU64Encoder()],
-      ["max_amount", getU64Encoder()],
-      ["max_odds", getU32Encoder()],
-      ["expiry", getU64Encoder()],
-      ["selections", getArrayEncoder(getSelectionEncoder())],
+      ['offer_id', getU64Encoder()],
+      ['max_amount', getU64Encoder()],
+      ['max_odds', getU32Encoder()],
+      ['expiry', getU64Encoder()],
+      ['selections', getArrayEncoder(getSelectionEncoder())],
    ]);
 const getOfferDecoder = (): Decoder<Offer> =>
    getStructDecoder([
-      ["offer_id", getU64Decoder()],
-      ["max_amount", getU64Decoder()],
-      ["max_odds", getU32Decoder()],
-      ["expiry", getU64Decoder()],
-      ["selections", getArrayDecoder(getSelectionDecoder())],
+      ['offer_id', getU64Decoder()],
+      ['max_amount', getU64Decoder()],
+      ['max_odds', getU32Decoder()],
+      ['expiry', getU64Decoder()],
+      ['selections', getArrayDecoder(getSelectionDecoder())],
    ]);
 export const getOfferCodec = (): Codec<Offer> =>
    combineCodec(getOfferEncoder(), getOfferDecoder());
@@ -291,13 +297,11 @@ export const getOfferCodec = (): Codec<Offer> =>
 const getMMOfferAccountEncoder = (): Encoder<MMOfferAccount> =>
    getStructEncoder([
       [
-         "existing_offers",
+         'existing_offers',
          // Map<bigint, bigint> -> Array<[bigint, bigint]>
          transformEncoder(
-            getArrayEncoder(
-               getTupleEncoder([getU64Encoder(), getU64Encoder()]),
-            ),
-            (map: Map<bigint, bigint>) => Array.from(map.entries()),
+            getArrayEncoder(getTupleEncoder([getU64Encoder(), getU64Encoder()])),
+            (map: Map<bigint, bigint>) => Array.from(map.entries())
          ),
       ],
    ]);
@@ -305,14 +309,11 @@ const getMMOfferAccountEncoder = (): Encoder<MMOfferAccount> =>
 const getMMOfferAccountDecoder = (): Decoder<MMOfferAccount> =>
    getStructDecoder([
       [
-         "existing_offers",
+         'existing_offers',
          // Array<[bigint, bigint]> -> Map<bigint, bigint>
          transformDecoder(
-            getArrayDecoder(
-               getTupleDecoder([getU64Decoder(), getU64Decoder()]),
-            ),
-            (arr: ReadonlyArray<readonly [bigint, bigint]>) =>
-               new Map(arr.map(([k, v]) => [k, v] as [bigint, bigint])),
+            getArrayDecoder(getTupleDecoder([getU64Decoder(), getU64Decoder()])),
+            (arr: ReadonlyArray<readonly [bigint, bigint]>) => new Map(arr.map(([k, v]) => [k, v] as [bigint, bigint]))
          ),
       ],
    ]);
@@ -320,118 +321,135 @@ const getMMOfferAccountDecoder = (): Decoder<MMOfferAccount> =>
 export const getMMOfferAccountCodec = (): Codec<MMOfferAccount> =>
    combineCodec(getMMOfferAccountEncoder(), getMMOfferAccountDecoder());
 
-// --- Actions enum (core variants) ---
-// Only PlaceBet, PlaceFreeBet, CancelBet, MatchBet, SettleBet
+// --- Additional codec definitions ---
+
+// OperationalStatus codec
+const getOperationalStatusEncoder = (): Encoder<OperationalStatus> =>
+   transformEncoder(
+      getU8Encoder(),
+      (status: OperationalStatus) => {
+         switch (status.__kind) {
+            case 'Unknown': return 0;
+            case 'Active': return 1;
+            case 'MMingPaused': return 2;
+            case 'PreBettingPaused': return 3;
+            case 'LiveBettingPaused': return 4;
+            case 'BettingPaused': return 5;
+            case 'Paused': return 6;
+            default: return 0;
+         }
+      }
+   );
+const getOperationalStatusDecoder = (): Decoder<OperationalStatus> =>
+   transformDecoder(
+      getU8Decoder(),
+      (value: number): OperationalStatus => {
+         switch (value) {
+            case 0: return { __kind: 'Unknown' };
+            case 1: return { __kind: 'Active' };
+            case 2: return { __kind: 'MMingPaused' };
+            case 3: return { __kind: 'PreBettingPaused' };
+            case 4: return { __kind: 'LiveBettingPaused' };
+            case 5: return { __kind: 'BettingPaused' };
+            case 6: return { __kind: 'Paused' };
+            default: return { __kind: 'Unknown' };
+         }
+      }
+   );
+export const getOperationalStatusCodec = (): Codec<OperationalStatus> =>
+   combineCodec(getOperationalStatusEncoder(), getOperationalStatusDecoder());
+
+
+// --- Actions enum ---
 export type Actions =
-   | { __kind: "PlaceBet"; value: BetData }
-   | { __kind: "PlaceFreeBet"; value: BetData }
-   | { __kind: "CancelBet"; value: boolean }
-   | {
-        __kind: "MatchBet";
-        value: {
-           amount: bigint;
-           signature: Uint8Array;
-           signer_pubkey: Uint8Array;
-           offer: Offer;
-        };
-     }
-   | {
-        __kind: "SettleBet";
-        value: {
-           is_modified_payout: boolean;
-           payout: bigint;
-           results: Uint8Array;
-        };
-     };
+   | { __kind: 'PlaceBet'; value: BetData }
+   | { __kind: 'PlaceFreeBet'; value: BetData }
+   | { __kind: 'CancelBet'; value: boolean }
+   | { __kind: 'MatchBet'; value: { amount: bigint; signature: Uint8Array; signer_pubkey: Uint8Array; offer: Offer } }
+   | { __kind: 'SettleBet'; value: { is_modified_payout: boolean; payout: bigint; results: Uint8Array } }
+   | { __kind: 'InitMM' }
+   | { __kind: 'MmWithdraw'; value: bigint }
+
 
 const getActionsEncoder = (): Encoder<Actions> =>
    getDiscriminatedUnionEncoder(
       [
-         ["PlaceBet", getStructEncoder([["value", getBetDataEncoder()]])],
-         ["PlaceFreeBet", getStructEncoder([["value", getBetDataEncoder()]])],
-         ["CancelBet", getStructEncoder([["value", getBooleanEncoder()]])],
+         ['PlaceBet', getStructEncoder([['value', getBetDataEncoder()]])],
+         ['PlaceFreeBet', getStructEncoder([['value', getBetDataEncoder()]])],
+         ['CancelBet', getStructEncoder([['value', getBooleanEncoder()]])],
          [
-            "MatchBet",
+            'MatchBet',
             getStructEncoder([
                [
-                  "value",
+                  'value',
                   getStructEncoder([
-                     ["amount", getU64Encoder()],
-                     ["signature", fixEncoderSize(getBytesEncoder(), 64)],
-                     ["signer_pubkey", fixEncoderSize(getBytesEncoder(), 32)],
-                     ["offer", getOfferEncoder()],
+                     ['amount', getU64Encoder()],
+                     ['signature', fixEncoderSize(getBytesEncoder(), 64)],
+                     ['signer_pubkey', fixEncoderSize(getBytesEncoder(), 32)],
+                     ['offer', getOfferEncoder()],
                   ]),
                ],
             ]),
          ],
          [
-            "SettleBet",
+            'SettleBet',
             getStructEncoder([
                [
-                  "value",
+                  'value',
                   getStructEncoder([
-                     ["is_modified_payout", getBooleanEncoder()],
-                     ["payout", getU64Encoder()],
-                     [
-                        "results",
-                        addEncoderSizePrefix(
-                           getBytesEncoder(),
-                           getU32Encoder(),
-                        ),
-                     ],
+                     ['is_modified_payout', getBooleanEncoder()],
+                     ['payout', getU64Encoder()],
+                     ['results', addEncoderSizePrefix(getBytesEncoder(), getU32Encoder())],
                   ]),
                ],
             ]),
          ],
+         ['InitMM', getStructEncoder([])],
+         ['MmWithdraw', getStructEncoder([['value', getU64Encoder()]])]
       ],
-      { size: getU8Encoder() },
+      { size: getU8Encoder() }
    );
 
 const getActionsDecoder = (): Decoder<Actions> =>
    getDiscriminatedUnionDecoder(
       [
-         ["PlaceBet", getStructDecoder([["value", getBetDataDecoder()]])],
-         ["PlaceFreeBet", getStructDecoder([["value", getBetDataDecoder()]])],
-         ["CancelBet", getStructDecoder([["value", getBooleanDecoder()]])],
+         ['PlaceBet', getStructDecoder([['value', getBetDataDecoder()]])],
+         ['PlaceFreeBet', getStructDecoder([['value', getBetDataDecoder()]])],
+         ['CancelBet', getStructDecoder([['value', getBooleanDecoder()]])],
          [
-            "MatchBet",
+            'MatchBet',
             getStructDecoder([
                [
-                  "value",
+                  'value',
                   getStructDecoder([
-                     ["amount", getU64Decoder()],
-                     ["signature", fixedBytesDecoder(64)],
-                     ["signer_pubkey", fixedBytesDecoder(32)],
-                     ["offer", getOfferDecoder()],
+                     ['amount', getU64Decoder()],
+                     ['signature', fixedBytesDecoder(64)],
+                     ['signer_pubkey', fixedBytesDecoder(32)],
+                     ['offer', getOfferDecoder()],
                   ]),
                ],
             ]),
          ],
          [
-            "SettleBet",
+            'SettleBet',
             getStructDecoder([
                [
-                  "value",
+                  'value',
                   getStructDecoder([
-                     ["is_modified_payout", getBooleanDecoder()],
-                     ["payout", getU64Decoder()],
-                     [
-                        "results",
-                        transformDecoder(
-                           addDecoderSizePrefix(
-                              getBytesDecoder(),
-                              getU32Decoder(),
-                           ),
-                           (v) => new Uint8Array(v as ArrayLike<number>),
-                        ),
-                     ],
+                     ['is_modified_payout', getBooleanDecoder()],
+                     ['payout', getU64Decoder()],
+                     ['results', transformDecoder(addDecoderSizePrefix(getBytesDecoder(), getU32Decoder()), (v) => new Uint8Array(v as ArrayLike<number>))],
                   ]),
                ],
             ]),
          ],
+         ['InitMM', getStructDecoder([])],
+         ['MmWithdraw', getStructDecoder([['value', getU64Decoder()]])]
       ],
-      { size: getU8Decoder() },
+      { size: getU8Decoder() }
    );
 
 export const getActionsCodec = (): Codec<Actions> =>
    combineCodec(getActionsEncoder(), getActionsDecoder());
+
+// --- End of codex ---

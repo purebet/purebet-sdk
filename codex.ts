@@ -359,6 +359,33 @@ const getOperationalStatusDecoder = (): Decoder<OperationalStatus> =>
 export const getOperationalStatusCodec = (): Codec<OperationalStatus> =>
    combineCodec(getOperationalStatusEncoder(), getOperationalStatusDecoder());
 
+// ProgramConfig type and codec
+export type ProgramConfig = {
+   operational_status: OperationalStatus;
+   flat_fee: bigint; // u64
+   place_fee: number; // u32
+   win_fee: number; // u32
+   cancellation_delay: bigint; // i64
+};
+
+const getProgramConfigEncoder = (): Encoder<ProgramConfig> =>
+   getStructEncoder([
+      ['operational_status', getOperationalStatusEncoder()],
+      ['flat_fee', getU64Encoder()],
+      ['place_fee', getU32Encoder()],
+      ['win_fee', getU32Encoder()],
+      ['cancellation_delay', getI64Encoder()],
+   ]);
+const getProgramConfigDecoder = (): Decoder<ProgramConfig> =>
+   getStructDecoder([
+      ['operational_status', getOperationalStatusDecoder()],
+      ['flat_fee', getU64Decoder()],
+      ['place_fee', getU32Decoder()],
+      ['win_fee', getU32Decoder()],
+      ['cancellation_delay', getI64Decoder()],
+   ]);
+export const getProgramConfigCodec = (): Codec<ProgramConfig> =>
+   combineCodec(getProgramConfigEncoder(), getProgramConfigDecoder());
 
 // --- Actions enum ---
 export type Actions =

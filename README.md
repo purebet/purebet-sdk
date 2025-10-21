@@ -262,3 +262,6 @@ import {
 ### v0.07
 - update codex
 - add get getOperationalStatus function
+### v0.08
+- add program config decoding to codex
+- add function to get current program config

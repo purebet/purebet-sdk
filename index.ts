@@ -5,6 +5,7 @@ export { buildCancelBetInstruction } from "./instructions/cancelBet";
 
 // Account utilities
 export {
+   getProgramConfig,
    decodeBetAccount,
    getUserBetsOnchain,
    getAllBetAccounts,

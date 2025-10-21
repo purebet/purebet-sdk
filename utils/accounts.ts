@@ -13,17 +13,19 @@ import {
    createRpc,
    createSolanaRpc,
 } from "@solana/kit";
-import { getBetCodec, type Bet } from "../codex";
+import { getBetCodec, getProgramConfigCodec, ProgramConfig, type Bet } from "../codex";
 import {
    TOKEN_PROGRAM_ADDR,
    TOKEN_MINT_ADDR,
    PROGRAM_ADDR,
    ASSOCIATED_TOKEN_PROGRAM_ID,
+   PROGRAM_AUTH_PDA_ADDR,
 } from "../constants";
 import { uuidToU8Array } from "./transforms";
 
 const addressEncoder = getAddressEncoder();
 const betCodec = getBetCodec();
+const programConfigCodec = getProgramConfigCodec();
 
 export interface DecodedBetAccount extends Bet {
    pubkey: Address;
@@ -253,4 +255,11 @@ export async function getATA(
       ],
    });
    return ataAddrAndBump;
+}
+
+export async function getProgramConfig(rpc: Rpc<SolanaRpcApi>, network: "solana_mainnet" | "solana_devnet" = "solana_mainnet"): Promise<ProgramConfig|null> {
+   const programConfig = await rpc.getAccountInfo(PROGRAM_AUTH_PDA_ADDR[network], {encoding: "base64"}).send()
+   if(programConfig === null || programConfig.value === null) return null
+   const programConfigDecoded = programConfigCodec.decode(Buffer.from(programConfig.value.data[0], programConfig.value.data[1]))
+   return programConfigDecoded
 }

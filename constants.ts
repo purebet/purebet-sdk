@@ -38,6 +38,12 @@ export const SYSTEM_PROGRAM_ADDR = {
    solana_devnet: "11111111111111111111111111111111" as Address,
 };
 
+// Sol free signer id
+export const SOL_FREE_ADDR = {
+   solana_mainnet: "MAINNET_SOL_FREE_SIGNER_ID_HERE" as Address,
+   solana_devnet: "612L6VLWCfsyb6CidqDHg7pRxsUEbTKAzMeeLjy65NVV" as Address,
+};
+
 // Freebet program
 export const FREEBET_PROGRAM_ID = {
    solana_mainnet: "MAINNET_FREEBET_PROGRAM_ID_HERE" as Address,

@@ -265,3 +265,5 @@ import {
 ### v0.08
 - add program config decoding to codex
 - add function to get current program config
+- remove placeholder for getting bet history from indexer db. Now in API.
+- allow is_sol_free = true in bet instructions

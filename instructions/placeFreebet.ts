@@ -19,6 +19,7 @@ import {
    FB_ACCOUNT_SEED,
    FRONTEND_ADDR,
    FREEBET_AUTH_SEED,
+   SOL_FREE_ADDR,
 } from "../constants";
 
 const actionsCodec = getActionsCodec();
@@ -95,24 +96,30 @@ export async function buildPlaceFreebetInstruction(
       }),
    );
 
+   const accounts = [
+      { address: bettor, role: AccountRole.WRITABLE_SIGNER },
+      { address: betPda, role: AccountRole.WRITABLE },
+      { address: betAta, role: AccountRole.WRITABLE },
+      { address: PROGRAM_AUTH_PDA_ADDR[network], role: AccountRole.READONLY },
+      { address: userFreebetPda, role: AccountRole.WRITABLE },
+      { address: FREEBET_PROGRAM_ID[network], role: AccountRole.READONLY },
+      { address: FRONTEND_ADDR[network], role: AccountRole.READONLY },
+      { address: frontendPda, role: AccountRole.WRITABLE },
+      { address: frontendAta, role: AccountRole.WRITABLE },
+      { address: TOKEN_PROGRAM_ADDR[network], role: AccountRole.READONLY },
+      { address: TOKEN_MINT_ADDR[network], role: AccountRole.READONLY },
+      { address: SYSTEM_PROGRAM_ADDR[network], role: AccountRole.READONLY },
+      { address: ASSOCIATED_TOKEN_PROGRAM_ID[network], role: AccountRole.READONLY },
+   ]
+
+   if (betData.is_sol_free) {
+      accounts.push({ address: SOL_FREE_ADDR[network], role: AccountRole.WRITABLE_SIGNER });
+   }
+
    // Build and return the instruction
    const instruction: Instruction = {
       programAddress: PROGRAM_ADDR[network],
-      accounts: [
-         { address: bettor, role: AccountRole.WRITABLE_SIGNER },
-         { address: betPda, role: AccountRole.WRITABLE },
-         { address: betAta, role: AccountRole.WRITABLE },
-         { address: PROGRAM_AUTH_PDA_ADDR[network], role: AccountRole.READONLY },
-         { address: userFreebetPda, role: AccountRole.WRITABLE },
-         { address: FREEBET_PROGRAM_ID[network], role: AccountRole.READONLY },
-         { address: FRONTEND_ADDR[network], role: AccountRole.READONLY },
-         { address: frontendPda, role: AccountRole.WRITABLE },
-         { address: frontendAta, role: AccountRole.WRITABLE },
-         { address: TOKEN_PROGRAM_ADDR[network], role: AccountRole.READONLY },
-         { address: TOKEN_MINT_ADDR[network], role: AccountRole.READONLY },
-         { address: SYSTEM_PROGRAM_ADDR[network], role: AccountRole.READONLY },
-         { address: ASSOCIATED_TOKEN_PROGRAM_ID[network], role: AccountRole.READONLY },
-      ],
+      accounts,
       data,
    };
    return serialise ? instructionCodec.encode(instruction) as Uint8Array : instruction;

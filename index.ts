@@ -16,12 +16,6 @@ export {
 // Decode utilities
 export { decodeMkt, decodePeriod, formatSelection, getProgramOperationalStatus } from "./utils/decode";
 
-// Indexer utilities
-export {
-   getUserBetsFromIndexer,
-   getBetHistory,
-} from "./utils/indexer";
-
 // Transform utilities
 export {
    playerToBytes,

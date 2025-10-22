@@ -18,6 +18,7 @@ import {
    FREEBET_AUTH_SEED,
    ADMIN_ADDR,
    ASSOCIATED_TOKEN_PROGRAM_ID,
+   SOL_FREE_ADDR,
 } from "../constants";
 import { getATA } from "../utils/accounts";
 
@@ -42,6 +43,7 @@ export async function buildCancelBetInstruction(
    isAdmin: boolean,
    bet: Address,
    bettor: Address,
+   betWasSolFree: boolean,
    network: "solana_mainnet" | "solana_devnet",
    serialise: false,
    isFreebet: true,
@@ -52,6 +54,7 @@ export async function buildCancelBetInstruction(
    isAdmin: boolean,
    bet: Address,
    bettor: Address,
+   betWasSolFree: boolean,
    network: "solana_mainnet" | "solana_devnet",
    serialise: false,
    isFreebet?: false,
@@ -62,6 +65,7 @@ export async function buildCancelBetInstruction(
    isAdmin: boolean,
    bet: Address,
    bettor: Address,
+   betWasSolFree: boolean,
    network: "solana_mainnet" | "solana_devnet",
    serialise: true,
    isFreebet: true,
@@ -72,6 +76,7 @@ export async function buildCancelBetInstruction(
    isAdmin: boolean,
    bet: Address,
    bettor: Address,
+   betWasSolFree: boolean,
    network: "solana_mainnet" | "solana_devnet",
    serialise: true,
    isFreebet?: false,
@@ -83,6 +88,7 @@ export async function buildCancelBetInstruction(
    isAdmin: boolean,
    bet: Address,
    bettor: Address,
+   betWasSolFree: boolean = false,
    network: "solana_mainnet" | "solana_devnet" = "solana_mainnet",
    serialise: boolean = false,
    isFreebet: boolean = false,
@@ -142,6 +148,10 @@ export async function buildCancelBetInstruction(
          { address: frontendPda, role: AccountRole.READONLY },
          { address: frontendAta, role: AccountRole.WRITABLE },
       );
+   }
+
+   if (betWasSolFree) {
+      accounts.push({ address: SOL_FREE_ADDR[network], role: AccountRole.WRITABLE_SIGNER });
    }
 
    const data = new Uint8Array(

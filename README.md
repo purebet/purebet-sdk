@@ -267,3 +267,7 @@ import {
 - add function to get current program config
 - remove placeholder for getting bet history from indexer db. Now in API.
 - allow is_sol_free = true in bet instructions
+### v0.09
+- fix instruction codec
+- fix sol-free on cancel ix
+- fix match prop mkt decode

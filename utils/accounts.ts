@@ -13,7 +13,7 @@ import {
    createRpc,
    createSolanaRpc,
 } from "@solana/kit";
-import { getBetCodec, getProgramConfigCodec, ProgramConfig, type Bet } from "../codex";
+import { getBetCodec, getOperationalStatusCodec, getProgramConfigCodec, OperationalStatus, ProgramConfig, type Bet } from "../codex";
 import {
    TOKEN_PROGRAM_ADDR,
    TOKEN_MINT_ADDR,
@@ -262,4 +262,24 @@ export async function getProgramConfig(rpc: Rpc<SolanaRpcApi>, network: "solana_
    if(programConfig === null || programConfig.value === null) return null
    const programConfigDecoded = programConfigCodec.decode(Buffer.from(programConfig.value.data[0], programConfig.value.data[1]))
    return programConfigDecoded
+}
+
+/**
+ * Get the current program opperational status
+ */
+const operationalStatusDecoder = getOperationalStatusCodec();
+export async function getProgramOperationalStatus(rpc: Rpc<SolanaRpcApi>, network: "solana_mainnet" | "solana_devnet" = "solana_mainnet"): Promise<OperationalStatus["__kind"]> {
+   try{
+      const response = await rpc
+         .getProgramAccounts(PROGRAM_AUTH_PDA_ADDR[network], {
+            encoding: "base64",
+         })
+         .send();
+      const operationalStatus = operationalStatusDecoder.decode(Buffer.from(...response[0].account.data));
+      return operationalStatus.__kind
+   } catch (error) {
+      throw new Error(
+         `Failed to get program operational status: ${error instanceof Error ? error.message : String(error)}`,
+      );
+   }
 }

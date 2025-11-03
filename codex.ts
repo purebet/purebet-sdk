@@ -123,9 +123,9 @@ export const getInstructionCodec = (): Codec<Instruction> =>
 export const getInstructionEncoder = (): Encoder<Instruction> =>
    transformEncoder(
       getStructEncoder([
-         ['programAddress', getBase58Codec()],
+         ['programAddress', getAddressEncoder()],
          ['accounts', getArrayEncoder(getStructEncoder([
-            ['address', getBase58Codec()],
+            ['address', getAddressEncoder()],
             ['role', getU8Encoder()],
          ]))],
          ['data', getArrayEncoder(getU8Encoder())],
@@ -143,9 +143,9 @@ export const getInstructionEncoder = (): Encoder<Instruction> =>
 export const getInstructionDecoder = (): Decoder<Instruction> =>
    transformDecoder(
       getStructDecoder([
-         ['programAddress', getBase58Codec()],
+         ['programAddress', getAddressDecoder()],
          ['accounts', getArrayDecoder(getStructDecoder([
-            ['address', getBase58Codec()],
+            ['address', getAddressDecoder()],
             ['role', getU8Decoder()],
          ]))],
          ['data', getArrayDecoder(getU8Decoder())],

@@ -31,6 +31,8 @@ const instructionCodec = getInstructionCodec();
  * @param isAdmin - Whether the cancellation is being performed by an admin
  * @param bet - The bet account address to cancel
  * @param bettor - The bettor's address
+ * @param betWasSolFree - Whether the bet was made as a SOL-free bet
+ * @param txIsSolFree - Whether the transaction is being performed as a SOL-free transaction
  * @param network - The Solana network to use (mainnet or devnet) - defaults to mainnet
  * @param serialise - Whether to return the instruction as serialized bytes (Uint8Array) or as an Instruction object - defaults to Instruction
  * @param isFreebet - Whether this is a freebet cancellation - defaults to false
@@ -44,6 +46,7 @@ export async function buildCancelBetInstruction(
    bet: Address,
    bettor: Address,
    betWasSolFree: boolean,
+   txIsSolFree: boolean,
    network: "solana_mainnet" | "solana_devnet",
    serialise: false,
    isFreebet: true,
@@ -55,6 +58,7 @@ export async function buildCancelBetInstruction(
    bet: Address,
    bettor: Address,
    betWasSolFree: boolean,
+   txIsSolFree: boolean,
    network: "solana_mainnet" | "solana_devnet",
    serialise: false,
    isFreebet?: false,
@@ -66,6 +70,7 @@ export async function buildCancelBetInstruction(
    bet: Address,
    bettor: Address,
    betWasSolFree: boolean,
+   txIsSolFree: boolean,
    network: "solana_mainnet" | "solana_devnet",
    serialise: true,
    isFreebet: true,
@@ -77,6 +82,7 @@ export async function buildCancelBetInstruction(
    bet: Address,
    bettor: Address,
    betWasSolFree: boolean,
+   txIsSolFree: boolean,
    network: "solana_mainnet" | "solana_devnet",
    serialise: true,
    isFreebet?: false,
@@ -89,6 +95,7 @@ export async function buildCancelBetInstruction(
    bet: Address,
    bettor: Address,
    betWasSolFree: boolean = false,
+   txIsSolFree: boolean = false,
    network: "solana_mainnet" | "solana_devnet" = "solana_mainnet",
    serialise: boolean = false,
    isFreebet: boolean = false,
@@ -150,8 +157,8 @@ export async function buildCancelBetInstruction(
       );
    }
 
-   if (betWasSolFree) {
-      accounts.push({ address: SOL_FREE_ADDR[network], role: AccountRole.WRITABLE_SIGNER });
+   if (betWasSolFree || txIsSolFree) {
+      accounts.push({ address: SOL_FREE_ADDR[network], role: txIsSolFree ? AccountRole.WRITABLE_SIGNER : AccountRole.WRITABLE });
    }
 
    const data = new Uint8Array(

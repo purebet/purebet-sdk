@@ -10,11 +10,12 @@ export {
    getUserBetsOnchain,
    getAllBetAccounts,
    getBetAccount,
+   getProgramOperationalStatus,
    type DecodedBetAccount,
 } from "./utils/accounts";
 
 // Decode utilities
-export { decodeMkt, decodePeriod, formatSelection, getProgramOperationalStatus } from "./utils/decode";
+export { decodeMkt, decodePeriod, formatSelection } from "./utils/decode";
 
 // Transform utilities
 export {

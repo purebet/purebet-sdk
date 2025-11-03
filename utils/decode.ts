@@ -1,3 +1,4 @@
+import { propsByMktValue } from "./playerProps";
 import { bytesToPlayer } from "./transforms";
 
 function numberToSide(number: number, home: string = "Home", away: string = "Away"): string {
@@ -18,7 +19,7 @@ export function decodeMkt(
    mkt: number, 
    home: string = "Home",
    away: string = "Away"
-): {name: string, type: string, description: string, sides: [string, string]|[true, null], displayType: number, value?: number|string} | undefined {
+): {name: string, type: string, description: string, sides: [string, string]|[true, null], displayType: number, value?: number|string, details?: string} | undefined {
    if(mkt == 0){
       return {name: "Moneyline", type: "ML", description: "Moneyline", sides: [home, away], displayType: 0};
    } else if(mkt == 1){
@@ -82,31 +83,21 @@ export function decodeMkt(
       const home = parseInt(mkt.toString().substring(1, 3));
       const away = parseInt(mkt.toString().substring(3, 5));
       return {name: `Correct Score ${home}-${away}`, type: "CS", description: "Correct Score", value: `${home}-${away}`, sides: [true, null], displayType: 3};
-   } else if (mkt >= 11000 && mkt < 66000) {
-      if(mkt === 12000){
-         return {name: "To Score", type: "PP", description: "To Score", sides: ["Yes", "No"], displayType: 0};
+   } else if (mkt >= 11000 && mkt < 65535) {
+      //round mkt down to nearest 500
+      let startingValue = Math.floor(mkt/500) * 500;
+      //fix for passing yards because it can be more than 250 yards
+      if(startingValue == 42500) startingValue = 42000;
+      const playerProp = propsByMktValue.get(startingValue);
+      if(!playerProp){
+         throw new Error("Invalid player prop market, market value must be between 11000 and 65535");
       }
-      if(mkt === 57000){
-         return {name: "First Goalscorer", type: "PP", description: "First Goalscorer", sides: ["Yes", "No"], displayType: 0};
-      }
-      if(mkt === 58000){
-         return {name: "To Be Booked", type: "PP", description: "To Be Booked", sides: ["Yes", "No"], displayType: 0};
-      }
-      const playerPropType = playerPropArray[parseInt(mkt.toString().substring(0, 2))-11]!;
-      const value = parseInt(mkt.toString().substring(3, 5));
-      return {name: `${playerPropType} Over/Under ${value}`, type: "PP", description: `Player Prop: ${playerPropType}`, value: value, sides: ["Over", "Under"], displayType: 1};
+      const value = Math.round((mkt - startingValue)/2 * 10)/10;
+      return {name: `${playerProp.prettyName} Over/Under ${value}`, type: "PP", description: `${playerProp.prettyName}`, value: value, sides: ["Over", "Under"], displayType: 1, details: playerProp.details ?? undefined};
+   } else {
+      throw new Error("Invalid market, market value must be between 0 and 65535");
    }
 }
-
-
-const playerPropArray = [
-   "Points", "Goals", "Assists", "Saves", 
-   "Home Runs", "Strikeouts", "Total Bases", "Pitching Out", "Hits", "Runs", "RBIs", "Stolen Bases", "Singles", "Doubles", "Triples", "Walks Issued", "Earned Runs", "Hits Allowed",
-   "Rebounds", "Steals", "Turnovers", "Blocks", "Three-Point Field Goals", "Double Double", "Triple Double", "Points+Assists", "Points+Rebounds", "Assists+Rebounds", "Points+Rebounds+Assist",
-   "Touchdowns", "Field Goals", "Rushing Yards", "Passing Yards", "Receiving Yards", "Rush Attempts", "Passing Attempts", "FG Attempts", "Rushes", "Receptions", "Completions", "Ints", "Ints Thrown", "Passing Touchdowns", 
-   "Shots On Goal", "PP Points", "Blocked Shots", 
-   "First Goalscorer", "Yellow Card", "Goals+Assists", "Red Card", "Shots", "Shots On Target", "Fouls", "Tackles", "Passes"
-]
 
 const sportIdTuples: [number, string][] = [
    [3, "Baseball"],
@@ -197,11 +188,11 @@ export function formatSelection(selection: {
    player: Uint8Array;
    side: boolean;
    is_live: boolean;
-}): string {
+}, playerName?: string): string {
    const market = decodeMkt(selection.mkt);
    const period = decodePeriod(selection.period, selection.sport);
-   const player = bytesToPlayer(selection.player);
+   const player = playerName ? playerName : bytesToPlayer(selection.player);
    const side = selection.side ? market?.sides[0] : market?.sides[1];
-   return `${player === "" ? player + " - " : ""}${market?.name} - ${period?.Longname} - ${side} ${selection.is_live ? " (LIVE)" : ""}`;
+   return `${player !== "" ? player + " - " : ""}${market?.name} - ${period?.Longname} - ${side} ${selection.is_live ? " (LIVE)" : ""}`;
 }
 

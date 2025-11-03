@@ -271,3 +271,5 @@ import {
 - fix instruction codec
 - fix sol-free on cancel ix
 - fix match prop mkt decode
+### v0.10
+- add player props

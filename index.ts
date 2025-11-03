@@ -26,3 +26,5 @@ export {
 
 // Re-export types and codecsfrom codex
 export * from "./codex";
+
+export * from "./utils/playerProps";

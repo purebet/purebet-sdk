@@ -17,7 +17,7 @@ import {
    SYSTEM_PROGRAM_ADDR,
    FREEBET_PROGRAM_ID,
    FB_ACCOUNT_SEED,
-   FRONTEND_ADDR,
+   PB_FRONTEND_ADDR,
    FREEBET_AUTH_SEED,
    SOL_FREE_ADDR,
 } from "../constants";
@@ -54,12 +54,12 @@ export async function buildPlaceFreebetInstruction(
    betData: BetData,
    network: "solana_mainnet" | "solana_devnet" = "solana_mainnet",
    serialise: boolean = false,
-   frontend: {id: number, address: Address} = {id: 1, address: FRONTEND_ADDR[network]},
+   frontend: {id: number, address: Address} = {id: 1, address: PB_FRONTEND_ADDR[network]},
 ): Promise<Instruction|Uint8Array> {
    if(betData.freebet_id == 0){
       throw new Error("Freebet ID is required");
    }
-   if(betData.frontend_id == frontend.id){
+   if(betData.frontend_id !== frontend.id){
       throw new Error("Frontend in bet data is not the same as the frontend id");
    }
    // Derive the bet PDA
@@ -103,7 +103,7 @@ export async function buildPlaceFreebetInstruction(
       { address: PROGRAM_AUTH_PDA_ADDR[network], role: AccountRole.READONLY },
       { address: userFreebetPda, role: AccountRole.WRITABLE },
       { address: FREEBET_PROGRAM_ID[network], role: AccountRole.READONLY },
-      { address: FRONTEND_ADDR[network], role: AccountRole.READONLY },
+      { address: frontend.address, role: AccountRole.READONLY },
       { address: frontendPda, role: AccountRole.WRITABLE },
       { address: frontendAta, role: AccountRole.WRITABLE },
       { address: TOKEN_PROGRAM_ADDR[network], role: AccountRole.READONLY },

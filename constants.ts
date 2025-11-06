@@ -2,23 +2,23 @@ import { Address } from "@solana/kit";
 
 // Program addresses
 export const PROGRAM_ADDR = {
-   solana_mainnet: "MAINNET_PROGRAM_ADDR_HERE" as Address,
+   solana_mainnet: "9bB3TADcwZEweUUcrp46FEpwMfLbwkEFQnc4patHPApp" as Address,
    solana_devnet: "8rtbc6yZ8fvDhQaK2nrxraUpVVQM6ySFuBpzkqXLYz24" as Address,
 };
 
 export const PROGRAM_AUTH_PDA_ADDR = {
-   solana_mainnet: "MAINNET_PROGRAM_AUTH_PDA_ADDR_HERE" as Address,
+   solana_mainnet: "4ZYXmTcU7ndtQYQ8kstt7zZXJtFueCfXFiW6Fc8UJZg5" as Address,
    solana_devnet: "2wMakfeDrHWMB7u3WQs9wV8FbmRBazcCgmB45oCuoJpA" as Address,
 };
 
 export const PROGRAM_FEE_ADDR = {
-   solana_mainnet: "MAINNET_PROGRAM_FEE_ADDR_HERE" as Address,
+   solana_mainnet: "9bF33qdYyXtdzfJVjqTxXQzbiXXSqPShgtwZLKtnDrku" as Address,
    solana_devnet: "8uvG33CkKKLZLbc4aphwtqgjkMBrAZqQqrXLcHnDWhCp" as Address,
 };
 
 // Token addresses
 export const TOKEN_MINT_ADDR = {
-   solana_mainnet: "MAINNET_TOKEN_MINT_ADDR_HERE" as Address,
+   solana_mainnet: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v" as Address,
    solana_devnet: "Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr" as Address,
 };
 
@@ -40,24 +40,24 @@ export const SYSTEM_PROGRAM_ADDR = {
 
 // Sol free signer id
 export const SOL_FREE_ADDR = {
-   solana_mainnet: "MAINNET_SOL_FREE_SIGNER_ID_HERE" as Address,
+   solana_mainnet: "pBSFcwP9RdohjJxZ2BuNhTTp88QvjQ1U4zJEd5ydEuX" as Address,
    solana_devnet: "612L6VLWCfsyb6CidqDHg7pRxsUEbTKAzMeeLjy65NVV" as Address,
 };
 
 // Freebet program
 export const FREEBET_PROGRAM_ID = {
-   solana_mainnet: "MAINNET_FREEBET_PROGRAM_ID_HERE" as Address,
+   solana_mainnet: "PBFb7DsfQvM1Qb49B3JWu5XSdyknUzprWJqdpCHHX6v" as Address,
    solana_devnet: "DpksNR6nnqrXzqSraTjS8qGUtPZUrKBZjxJu6NZUE8Hk" as Address,
 };
 
-export const FRONTEND_ADDR = {
-   solana_mainnet: "MAINNET_FRONTEND_ADDR_HERE" as Address,
+export const PB_FRONTEND_ADDR = {
+   solana_mainnet: "pbfEPvHrDu5bsgmVZSyc6YySV62EDDMYdYTkywjruuP" as Address,
    solana_devnet: "7mjvQ5vvHUvj8B7uDM23ZitNEqT7Gqim9Yz8kHgWwhAd" as Address,
 };
 
 // Admin address
 export const ADMIN_ADDR = {
-   solana_mainnet: "MAINNET_ADMIN_ADDR_HERE" as Address,
+   solana_mainnet: "9B4dm1N1Ssn1Yukphpq8MCZcA8FiJagZTRRr5c4Vyv1Y" as Address,
    solana_devnet: "AdmkgFyD3RhJfELVNv7VaXnDbxrCEqZGEYAfGVUhTVnj" as Address,
 };
 

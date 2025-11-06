@@ -252,24 +252,27 @@ import {
 - Complete TypeScript definitions
 ### v0.0.3
 - add option to serialise the instructions
-### v0.04
+### v0.0.4
 - add bet_token to codex
-### v0.05
+### v0.0.5
 - fix user bet account filters to add unmatchedOnly param
-### v0.06
+### v0.0.6
 - fix bet decoding
 - add finding bet by betId
-### v0.07
+### v0.0.7
 - update codex
 - add get getOperationalStatus function
-### v0.08
+### v0.0.8
 - add program config decoding to codex
 - add function to get current program config
 - remove placeholder for getting bet history from indexer db. Now in API.
 - allow is_sol_free = true in bet instructions
-### v0.09
+### v0.0.9
 - fix instruction codec
 - fix sol-free on cancel ix
 - fix match prop mkt decode
-### v0.10
+### v0.0.10
 - add player props
+### v0.0.11
+- add mainnet (beta) addresses
+- fix fb place/cancel accounts error

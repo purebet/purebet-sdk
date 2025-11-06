@@ -14,7 +14,7 @@ import {
    PROGRAM_FEE_ADDR,
    FREEBET_PROGRAM_ID,
    FB_ACCOUNT_SEED,
-   FRONTEND_ADDR,
+   PB_FRONTEND_ADDR,
    FREEBET_AUTH_SEED,
    ADMIN_ADDR,
    ASSOCIATED_TOKEN_PROGRAM_ID,
@@ -99,7 +99,7 @@ export async function buildCancelBetInstruction(
    network: "solana_mainnet" | "solana_devnet" = "solana_mainnet",
    serialise: boolean = false,
    isFreebet: boolean = false,
-   frontend?: {id: number, address: Address},
+   frontend: {id: number, address: Address} = {id: 1, address: PB_FRONTEND_ADDR[network]},
 ): Promise<Instruction | Uint8Array> {
    const [betAta] = await getATA(bet, TOKEN_MINT_ADDR[network], TOKEN_PROGRAM_ADDR[network], ASSOCIATED_TOKEN_PROGRAM_ID[network]);
 
@@ -139,9 +139,9 @@ export async function buildCancelBetInstruction(
       });
 
       const [frontendPda] = await getProgramDerivedAddress({
-         programAddress: frontend.address,
+         programAddress: FREEBET_PROGRAM_ID[network],
          seeds: [
-            addressEncoder.encode(FRONTEND_ADDR[network]),
+            addressEncoder.encode(frontend.address),
             Buffer.from(FREEBET_AUTH_SEED),
             Buffer.from([frontend.id]),
          ],

@@ -276,3 +276,9 @@ import {
 ### v0.0.11
 - add mainnet (beta) addresses
 - fix fb place/cancel accounts error
+### v0.0.12
+- add market group title
+### v0.0.13
+- update format selection
+### v0.0.14
+- add suuport for esports

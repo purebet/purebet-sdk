@@ -284,3 +284,5 @@ import {
 - add suuport for esports
 ### v0.0.15
 - fix side display for markets with values
+### v0.0.16
+- fix display of negative handicap

@@ -32,8 +32,8 @@ export function decodeMkt(
       return {name: "Both Teams To Score", type: "BTTS", description: "Both Teams To Score", groupTitle: "Both Teams To Score", sides: ["Yes", "No"], displayType: 0};
    } else if (mkt >= 10 && mkt <= 50) {
       return {name: `Outcome ${mkt-10}`, type: "MSO", description: "Multi-Selection Outcome", groupTitle: "Result", value: mkt-10, sides: ["Win", "Not win"], displayType: 2};
-   } else if (mkt >= 100 && mkt < 300) {
-      return {name: `Handicap ${(mkt-200)/2}`, type: "AH", description: "Handicap", groupTitle: "Handicap", value: (mkt-200)/2, sides: [`${home} ${mkt > 200 ? "+" : "-"}${((mkt-200)/2).toFixed(1)}`, `${away} ${mkt > 200 ? "-" : "+"}${((mkt-200)/-2).toFixed(1)}`], displayType: 1};
+   } else if (mkt >= 100 && mkt < 300) {                                                                                                                             //string adds the "-"
+      return {name: `Handicap ${(mkt-200)/2}`, type: "AH", description: "Handicap", groupTitle: "Handicap", value: (mkt-200)/2, sides: [`${home} ${mkt > 200 ? "+" : ""}${((mkt-200)/2).toFixed(1)}`, `${away} ${mkt > 200 ? "" : "+"}${((mkt-200)/-2).toFixed(1)}`], displayType: 1};
    } else if (mkt >= 400 && mkt < 450) {
       return {name: `Both Teams To Score (Yes) & Over ${(mkt-400)/2}`, type: "BTTS+OU", description: "Both Teams To Score (Yes) & Over/Under", groupTitle: "Both Teams To Score and Over/Under", value: (mkt-400)/2, sides: [true, null], displayType: 3};
    } else if (mkt >= 450 && mkt < 500) {

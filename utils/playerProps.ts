@@ -41,8 +41,10 @@ const playerProps: PlayerPropDetails[] = [
    { mktStartingValue: 40000, prettyName: "Touchdowns", sports: ["football"], inUse: true },
    { mktStartingValue: 40500, prettyName: "Field Goals", sports: ["football"], inUse: false },
    { mktStartingValue: 41000, prettyName: "Rushing Yards", sports: ["football"], inUse: true },
+   { mktStartingValue: 41500, prettyName: "Rushing Attempts", sports: ["football"], inUse: true },
    { mktStartingValue: 42000, prettyName: "Passing Yards", sports: ["football"], inUse: true },
-   //skip 42500 because passing yards can be more than 250 yards
+   //use 42500 also for passing yards because passing yards can be more than 250 yards
+   { mktStartingValue: 42500, prettyName: "Passing Yards", sports: ["football"], inUse: true },
    { mktStartingValue: 43000, prettyName: "Receiving Yards", sports: ["football"], inUse: true },
    { mktStartingValue: 43500, prettyName: "Rush Attempts", sports: ["football"], inUse: true },
    { mktStartingValue: 44000, prettyName: "Pass Attempts", sports: ["football"], inUse: true },

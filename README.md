@@ -282,3 +282,5 @@ import {
 - update format selection
 ### v0.0.14
 - add suuport for esports
+### v0.0.15
+- fix side display for markets with values

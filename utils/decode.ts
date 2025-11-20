@@ -33,7 +33,7 @@ export function decodeMkt(
    } else if (mkt >= 10 && mkt <= 50) {
       return {name: `Outcome ${mkt-10}`, type: "MSO", description: "Multi-Selection Outcome", groupTitle: "Result", value: mkt-10, sides: ["Win", "Not win"], displayType: 2};
    } else if (mkt >= 100 && mkt < 300) {
-      return {name: `Handicap ${(mkt-200)/2}`, type: "AH", description: "Handicap", groupTitle: "Handicap", value: (mkt-200)/2, sides: [home, away], displayType: 1};
+      return {name: `Handicap ${(mkt-200)/2}`, type: "AH", description: "Handicap", groupTitle: "Handicap", value: (mkt-200)/2, sides: [`${home} ${mkt > 200 ? "+" : "-"}${((mkt-200)/2).toFixed(1)}`, `${away} ${mkt > 200 ? "-" : "+"}${((mkt-200)/-2).toFixed(1)}`], displayType: 1};
    } else if (mkt >= 400 && mkt < 450) {
       return {name: `Both Teams To Score (Yes) & Over ${(mkt-400)/2}`, type: "BTTS+OU", description: "Both Teams To Score (Yes) & Over/Under", groupTitle: "Both Teams To Score and Over/Under", value: (mkt-400)/2, sides: [true, null], displayType: 3};
    } else if (mkt >= 450 && mkt < 500) {
@@ -61,11 +61,11 @@ export function decodeMkt(
       const BTTS = thirdDigit === 0 ? "Yes" : "No"
       return {name: `${FTWinner} & ${BTTS}`, type: "FT+BTTS", description: "Full Time & Both Teams To Score", groupTitle: "Full Time & Both Teams To Score", value: `${FTWinner}/${BTTS}`, sides: [true, null], displayType: 3};
    } else if (mkt >= 1000 && mkt < 2000) {
-      return {name: `Over/Under ${(mkt-1000)/2}`, type: "OU", description: "Over/Under", groupTitle: "Over/Under", value: (mkt-1000)/2, sides: ["Over", "Under"], displayType: 1};
+      return {name: `Over/Under ${(mkt-1000)/2}`, type: "OU", description: "Over/Under", groupTitle: "Over/Under", value: (mkt-1000)/2, sides: [`Over ${((mkt-1000)/2).toFixed(1)}`, `Under ${((mkt-1000)/2).toFixed(1)}`], displayType: 1};
    } else if (mkt >= 2000 && mkt < 3000) {
-      return {name: `${home} Over/Under ${(mkt-2000)/2}`, type: "TOU", description: "Home Over/Under", groupTitle: "Team Over/Under", value: (mkt-2000)/2, sides: ["Over", "Under"], displayType: 1};
+      return {name: `${home} Over/Under ${(mkt-2000)/2}`, type: "TOU", description: "Home Over/Under", groupTitle: "Team Over/Under", value: (mkt-2000)/2, sides: [`Over ${((mkt-2000)/2).toFixed(1)}`, `Under ${((mkt-2000)/2).toFixed(1)}`], displayType: 1};
    } else if (mkt >= 3000 && mkt < 4000) {
-      return {name: `${away} Over/Under ${(mkt-3000)/2}`, type: "TOU", description: "Away Over/Under", groupTitle: "Team Over/Under", value: (mkt-3000)/2, sides: ["Over", "Under"], displayType: 1};
+      return {name: `${away} Over/Under ${(mkt-3000)/2}`, type: "TOU", description: "Away Over/Under", groupTitle: "Team Over/Under", value: (mkt-3000)/2, sides: [`Over ${((mkt-3000)/2).toFixed(1)}`, `Under ${((mkt-3000)/2).toFixed(1)}`], displayType: 1};
    } else if (mkt >= 5000 && mkt < 5500) {
       return {name: `${home} Win & Over/Under ${(mkt-5000)/2}`, type: "FT+OU", description: "Home win & Over/Under", groupTitle: "Winner & Over/Under", value: (mkt-5000)/2, sides: [true, null], displayType: 3};
    } else if (mkt >= 5500 && mkt < 6000) {
@@ -93,7 +93,7 @@ export function decodeMkt(
          throw new Error("Invalid player prop market, market value must be between 11000 and 65535");
       }
       const value = Math.round((mkt - startingValue)/2 * 10)/10;
-      return {name: `${playerProp.prettyName} Over/Under ${value}`, type: "PP", description: `${playerProp.prettyName}`, groupTitle: "Player Prop", value: value, sides: ["Over", "Under"], displayType: 1, details: playerProp.details ?? undefined};
+      return {name: `${playerProp.prettyName} Over/Under ${value}`, type: "PP", description: `${playerProp.prettyName}`, groupTitle: "Player Prop", value: value, sides: [`Over ${value.toFixed(1)}`, `Under ${value.toFixed(1)}`], displayType: 1, details: playerProp.details ?? undefined};
    } else {
       throw new Error("Invalid market, market value must be between 0 and 65535");
    }
